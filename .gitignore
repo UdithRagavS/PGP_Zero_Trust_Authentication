@@ -1,0 +1,14 @@
+# Environment config (secrets, DB passwords)
+.env
+
+# SQLite database file (auto-created if no Postgres)
+*.db
+
+# Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual environment (if someone accidentally commits it)
+.venv/
