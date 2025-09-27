@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <style>
+        .flash-success { color: green; font-weight: bold; }
+        .flash-error { color: red; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>Register User</h2>
+
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <p class="flash-{{category}}">{{ message }}</p>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST">
+        <label>Username:</label><br>
+        <input type="text" name="username" required><br><br>
+
+        <label>PGP Public Key:</label><br>
+        <textarea name="pgp_key" rows="8" cols="50" required></textarea><br><br>
+
+        <button type="submit">Register</button>
+    </form>
+</body>
+</html>
