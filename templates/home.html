@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Zero-Trust Auth</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin-top: 100px;
+    }
+    h1 {
+      color: #333;
+    }
+    .btn {
+      display: inline-block;
+      padding: 12px 24px;
+      margin: 10px;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+      color: white;
+      background-color: #007BFF;
+      border-radius: 6px;
+      transition: background-color 0.3s;
+    }
+    .btn:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>🔐 Zero-Trust Authentication</h1>
+  <p>Select an option to continue:</p>
+
+  <a href="{{ url_for('login') }}" class="btn">Login</a>
+  <a href="{{ url_for('register') }}" class="btn">Register</a>
+</body>
+</html>

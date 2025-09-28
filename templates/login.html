@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Login</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 20px; }
+    .hidden { display: none; }
+    textarea, input { width: 100%; margin: 8px 0; }
+    button { padding: 8px 16px; margin-top: 10px; cursor: pointer; }
+    .message { margin-top: 15px; font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2>🔐 Login</h2>
+
+  <!-- Step 1: Enter username -->
+  <label>Username:</label>
+  <input type="text" id="username" required>
+  <button id="getChallenge">Get Challenge</button>
+
+  <div id="challengeSection" class="hidden">
+    <hr>
+    <p><strong>Challenge:</strong></p>
+    <textarea id="challenge" readonly></textarea>
+
+    <p>Paste your signed message (PGP signature):</p>
+    <textarea id="signature"></textarea>
+
+    <button id="verifyLogin">Verify & Login</button>
+  </div>
+
+  <div id="result" class="message"></div>
+
+  <p><a href="{{ url_for('home') }}">← Back to Home</a></p>
+
+  <script>
+    const getChallengeBtn = document.getElementById("getChallenge");
+    const verifyBtn = document.getElementById("verifyLogin");
+    const challengeSection = document.getElementById("challengeSection");
+    const resultBox = document.getElementById("result");
+
+    // Step 1: Get Challenge
+    getChallengeBtn.addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      if (!username) {
+        resultBox.textContent = "❌ Please enter a username";
+        resultBox.style.color = "red";
+        return;
+      }
+
+      const res = await fetch("/auth/challenge", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `username=${encodeURIComponent(username)}`
+      });
+
+      const data = await res.json();
+      if (data.challenge) {
+        document.getElementById("challenge").value = data.challenge;
+        challengeSection.classList.remove("hidden");
+        resultBox.textContent = "✅ Challenge received. Now sign it with your PGP private key.";
+        resultBox.style.color = "green";
+      } else {
+        resultBox.textContent = data.error || "❌ Failed to get challenge.";
+        resultBox.style.color = "red";
+      }
+    });
+
+    // Step 2: Verify login
+    verifyBtn.addEventListener("click", async () => {
+      const username = document.getElementById("username").value.trim();
+      const challenge = document.getElementById("challenge").value.trim();
+      const signature = document.getElementById("signature").value.trim();
+
+      if (!signature) {
+        resultBox.textContent = "❌ Please paste your signed challenge.";
+        resultBox.style.color = "red";
+        return;
+      }
+
+      const res = await fetch("/auth/verify", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: `username=${encodeURIComponent(username)}&challenge=${encodeURIComponent(challenge)}&signature=${encodeURIComponent(signature)}`
+      });
+
+      const data = await res.json();
+      if (data.message) {
+        resultBox.textContent = data.message;
+        resultBox.style.color = "green";
+      } else {
+        resultBox.textContent = data.error || "❌ Login failed.";
+        resultBox.style.color = "red";
+      }
+    });
+  </script>
+</body>
+</html>

@@ -56,22 +56,55 @@ python -m flask run
 Visit in browser:  
 👉 http://127.0.0.1:5000/
 
-Expected output:
-```json
-{"message": "Hello, Zero-Trust World!"}
-```
+Expected output: It will bring you to the home page where you can login or register as a new user.
 
 ---
 
 ## 🛠 Roadmap
 
-- [ ] Add `/register` endpoint for uploading PGP public keys  
-- [ ] Implement `/auth/challenge` and `/auth/verify` endpoints  
+- [✅] Add `/register` endpoint for uploading PGP public keys  
+- [✅ ] Implement `/auth/challenge` and `/auth/verify` endpoints  
 - [ ] Issue JWT tokens on successful login  
 - [ ] Add tamper-proof blockchain-backed audit log (Ethereum testnet / Hyperledger)  
 - [ ] Dockerize for one-click setup  
 - [ ] Add unit tests (pytest)  
 - [ ] Deploy demo on Render/Heroku for public testing  
+
+---
+
+## 🔑 GnuPG Setup
+
+This project requires GnuPG installed and available in your system PATH.
+
+Check installation:
+```gpg --version
+```
+
+Generate a new PGP key:
+```gpg --full-generate-key
+```
+Export your public key (to paste in the Register page):
+```gpg --armor --export your@email.com
+```
+---
+
+## 🔄 Authentication Flow
+
+1. Register: 
+- Go to /register
+- Enter your username and paste your PGP public key
+- User is saved in the database
+
+2. Login:
+- Go to /login
+- Enter your username and click Get Challenge
+- Copy the challenge string, save it to challenge.txt
+- Sign it with your private key:
+```gpg --clear-sign challenge.txt
+```
+- Open challenge.txt.asc, copy the signed message into the login form
+- Submit → App verifies signature against stored public key
+- On success, you’re authenticated 🎉
 
 ---
 
@@ -84,6 +117,7 @@ PGP_Zero_Trust_Authentication/
 │── .env.example        # Example environment variables
 │── .gitignore          # Ignore secrets, venv, DB files
 │── README.md           # Project documentation
+│── templates/          # HTML Pages
 │── instance/           # Local SQLite DB (auto-created if used)
 └── .venv/              # Local virtual environment (ignored in git)
 ```
